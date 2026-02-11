@@ -2,126 +2,105 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة القيادة | المدير</title>
+    <title>لوحة المدير | Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     
     <style>
-        :root {
-            --bg-deep: #020617;
-            --card-bg: rgba(15, 23, 42, 0.8);
-            --primary: #3b82f6;
-            --success: #10b981;
-            --danger: #ef4444;
-        }
-        body { font-family: 'Cairo', sans-serif; background: var(--bg-deep); color: white; overflow-x: hidden; }
+        :root { --bg: #020617; --surface: #0f172a; --primary: #3b82f6; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); color: white; overflow-x: hidden; }
         
-        .fluid-glass {
-            background: var(--card-bg);
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.05);
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             border-radius: 2rem;
         }
 
-        .input-code {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.1);
-            text-align: center;
-            letter-spacing: 2px;
-            transition: 0.3s;
+        .btn-google {
+            background: white;
+            color: #1f2937;
+            transition: transform 0.2s;
         }
-        .input-code:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
+        .btn-google:active { transform: scale(0.95); }
 
-        .btn-enter {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            box-shadow: 0 5px 20px rgba(37, 99, 235, 0.4);
-        }
-        
-        .request-card {
-            transition: all 0.3s ease;
-            border-right: 4px solid transparent;
-        }
-        .request-card:hover {
-            transform: translateX(-5px);
-            border-right-color: var(--primary);
-            background: rgba(30, 41, 59, 0.9);
-        }
+        .btn-action { transition: all 0.2s; }
+        .btn-action:hover { transform: translateY(-2px); }
 
         .fade-in { animation: fadeIn 0.5s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-6">
+<body class="min-h-screen p-6 flex flex-col items-center">
 
     <!-- Login Section -->
-    <section id="login-panel" class="w-full max-w-sm flex flex-col justify-center min-h-[80vh] text-center">
-        <div class="fluid-glass p-10 relative overflow-hidden">
-            <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-600/20 rounded-full blur-3xl"></div>
-            
-            <div class="w-20 h-20 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-6 text-4xl text-blue-500 shadow-xl border border-slate-700">
+    <section id="login-section" class="w-full max-w-sm text-center mt-20 flex flex-col items-center">
+        <div class="glass-panel p-10 w-full">
+            <div class="w-20 h-20 bg-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl text-blue-500">
                 <i class="fas fa-user-shield"></i>
             </div>
+            <h1 class="text-2xl font-black mb-2">بوابة الإدارة</h1>
+            <p class="text-gray-400 text-xs mb-8">يرجى تسجيل الدخول بحساب Gmail المصرح له</p>
             
-            <h1 class="text-2xl font-black mb-2">بوابة المدير</h1>
-            <p class="text-gray-500 text-xs mb-8">أدخل كود الوصول الخاص للتحكم بالنظام</p>
-            
-            <input type="password" id="access-code" placeholder="أدخل الكود هنا" class="input-code w-full p-4 rounded-xl text-xl font-bold mb-6 text-white placeholder-gray-600">
-            
-            <button onclick="checkCode()" class="btn-enter w-full py-4 rounded-xl font-black text-lg transition hover:scale-[1.02]">
-                دخول النظام
+            <button onclick="adminLogin()" class="btn-google w-full py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-lg">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5">
+                دخول عبر Google
             </button>
-            <p id="error-msg" class="text-red-500 text-xs mt-4 hidden font-bold">الكود غير صحيح ⛔</p>
+            <p id="error-msg" class="text-red-500 text-xs mt-4 hidden font-bold"></p>
         </div>
     </section>
 
     <!-- Dashboard Section -->
-    <section id="dashboard-panel" class="hidden w-full max-w-4xl pt-10">
-        
+    <section id="dashboard-section" class="hidden w-full max-w-5xl">
         <!-- Header -->
-        <header class="flex justify-between items-center mb-10 fluid-glass p-6">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-xl font-bold border-4 border-[#020617]">A</div>
+        <header class="flex flex-col md:flex-row justify-between items-center mb-10 glass-panel p-6">
+            <div class="flex items-center gap-4 mb-4 md:mb-0">
+                <img id="admin-photo" class="w-12 h-12 rounded-full border-2 border-blue-500">
                 <div>
-                    <h2 class="font-black text-lg">المدير العام</h2>
-                    <p class="text-xs text-green-400 font-bold flex items-center gap-1"><span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> متصل الآن</p>
+                    <h2 class="font-black text-lg" id="admin-name">المسؤول</h2>
+                    <p class="text-xs text-green-400 font-bold flex items-center gap-1">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> متصل بالنظام
+                    </p>
                 </div>
             </div>
-            <button onclick="logout()" class="bg-red-500/10 text-red-500 p-3 rounded-xl hover:bg-red-500 hover:text-white transition"><i class="fas fa-power-off"></i></button>
+            <button onclick="logout()" class="bg-red-500/10 text-red-500 px-6 py-2 rounded-xl hover:bg-red-500 hover:text-white transition font-bold text-sm">
+                <i class="fas fa-sign-out-alt ml-2"></i> خروج
+            </button>
         </header>
 
         <!-- Stats -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div class="fluid-glass p-6 border-b-4 border-blue-500">
-                <p class="text-gray-400 text-xs font-bold mb-2 uppercase">طلبات الانتظار</p>
-                <h3 class="text-4xl font-black text-white" id="count-pending">0</h3>
+            <div class="glass-panel p-6 border-b-4 border-blue-500">
+                <p class="text-gray-400 text-xs font-bold uppercase mb-2">الطلبات المعلقة</p>
+                <h3 class="text-4xl font-black text-white" id="pending-count">0</h3>
             </div>
-            <div class="fluid-glass p-6 border-b-4 border-green-500 opacity-60">
-                <p class="text-gray-400 text-xs font-bold mb-2 uppercase">تمت الموافقة</p>
-                <h3 class="text-4xl font-black text-green-400">--</h3>
+            <div class="glass-panel p-6 border-b-4 border-yellow-500">
+                <p class="text-gray-400 text-xs font-bold uppercase mb-2">حالة النظام</p>
+                <h3 class="text-xl font-black text-yellow-500 mt-2">يعمل ✅</h3>
+            </div>
+            <div class="glass-panel p-6 border-b-4 border-green-500">
+                <p class="text-gray-400 text-xs font-bold uppercase mb-2">البريد المصرح</p>
+                <h3 class="text-xs font-bold text-green-400 mt-2 truncate">kmmkmkmlkbkk@gmail.com</h3>
             </div>
         </div>
 
         <!-- Requests List -->
-        <h3 class="text-xl font-black mb-6 flex items-center gap-2"><i class="fas fa-list text-blue-500"></i> طلبات الشحن الواردة</h3>
+        <h3 class="text-xl font-black mb-6 flex items-center gap-2">
+            <i class="fas fa-list-ul text-blue-500"></i> طلبات الشحن الواردة
+        </h3>
         
-        <div id="requests-container" class="space-y-4">
-            <!-- Requests injected here -->
-            <div class="text-center py-20 opacity-30">
-                <i class="fas fa-spinner fa-spin text-4xl mb-4"></i>
-                <p>جاري الاتصال بقاعدة البيانات...</p>
-            </div>
+        <div id="requests-list" class="space-y-4 min-h-[200px]">
+            <div class="text-center py-20 opacity-30">جاري تحميل البيانات...</div>
         </div>
-
     </section>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, doc, collection, onSnapshot, runTransaction, deleteDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, collection, onSnapshot, runTransaction, increment, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // نفس إعدادات اللعبة بالضبط
         const firebaseConfig = {
             apiKey: "AIzaSyAuWgWjxvlwVLt_nxoA0g_Z_k21Yn2MuJ8",
             authDomain: "power-4ec4d.firebaseapp.com",
@@ -132,123 +111,139 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
         
-        // يجب أن يطابق نفس ID اللعبة لكي تظهر البيانات
-        const appId = 'we-are-here-3d-final'; 
+        // معرف التطبيق الموحد
+        const appId = 'we-are-here-ultimate';
 
-        const SECRET_PASS = "07709922114AAA";
+        // ✅✅✅ القائمة المسموح لها بالدخول ✅✅✅
+        const ALLOWED_EMAILS = [
+            "kmmkmkmlkbkk@gmail.com"
+        ]; 
 
-        // --- Logic ---
-
-        window.checkCode = () => {
-            const input = document.getElementById('access-code').value;
-            if (input === SECRET_PASS) {
-                document.getElementById('login-panel').classList.add('hidden');
-                document.getElementById('dashboard-panel').classList.remove('hidden');
-                startListening();
-            } else {
-                const err = document.getElementById('error-msg');
-                err.classList.remove('hidden');
-                err.classList.add('animate-bounce');
-                setTimeout(() => err.classList.remove('animate-bounce'), 1000);
+        // Auth Logic
+        window.adminLogin = async () => {
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error(error);
+                showError("فشل تسجيل الدخول: " + error.message);
             }
         };
 
-        window.logout = () => location.reload();
+        window.logout = () => signOut(auth);
 
+        onAuthStateChanged(auth, (user) => {
+            const loginSec = document.getElementById('login-section');
+            const dashSec = document.getElementById('dashboard-section');
+
+            if (user) {
+                // التحقق من الايميل (حماية الواجهة)
+                if (ALLOWED_EMAILS.includes(user.email)) { 
+                    loginSec.classList.add('hidden');
+                    dashSec.classList.remove('hidden');
+                    
+                    document.getElementById('admin-name').innerText = user.displayName;
+                    document.getElementById('admin-photo').src = user.photoURL;
+                    
+                    startListening();
+                } else {
+                    signOut(auth);
+                    showError(`عذراً، البريد ${user.email} غير مصرح له بالإدارة.`);
+                }
+            } else {
+                loginSec.classList.remove('hidden');
+                dashSec.classList.add('hidden');
+            }
+        });
+
+        function showError(msg) {
+            const el = document.getElementById('error-msg');
+            el.innerText = msg;
+            el.classList.remove('hidden');
+        }
+
+        // Dashboard Logic
         function startListening() {
-            const reqRef = collection(db, 'artifacts', appId, 'public', 'data', 'deposit_requests');
-            
-            onSnapshot(reqRef, (snapshot) => {
-                const container = document.getElementById('requests-container');
-                const pendingCount = document.getElementById('count-pending');
-                
-                pendingCount.innerText = snapshot.size;
-                container.innerHTML = '';
+            const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'deposit_requests');
+            onSnapshot(colRef, (snap) => {
+                const list = document.getElementById('requests-list');
+                document.getElementById('pending-count').innerText = snap.size;
+                list.innerHTML = '';
 
-                if (snapshot.empty) {
-                    container.innerHTML = `
-                        <div class="fluid-glass p-12 text-center opacity-40">
+                if(snap.empty) {
+                    list.innerHTML = `
+                        <div class="glass-panel p-12 text-center opacity-40">
                             <i class="fas fa-check-circle text-5xl mb-4 text-green-500"></i>
-                            <p class="font-bold">لا توجد طلبات معلقة حالياً</p>
-                        </div>
-                    `;
+                            <p class="font-bold">لا توجد طلبات جديدة</p>
+                        </div>`;
                     return;
                 }
 
-                snapshot.forEach(docSnap => {
-                    const data = docSnap.data();
+                snap.forEach(docSnap => {
+                    const d = docSnap.data();
                     const id = docSnap.id;
-                    const time = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleTimeString('ar-IQ') : 'الآن';
+                    const date = d.timestamp ? new Date(d.timestamp.toDate()).toLocaleTimeString('ar-IQ') : 'الآن';
 
-                    const card = document.createElement('div');
-                    card.className = "fluid-glass p-6 flex flex-col md:flex-row justify-between items-center gap-6 request-card fade-in";
-                    card.innerHTML = `
+                    const item = document.createElement('div');
+                    item.className = "glass-panel p-6 flex flex-col md:flex-row justify-between items-center gap-6 fade-in border-r-4 border-blue-500";
+                    item.innerHTML = `
                         <div class="flex-1 text-right w-full">
                             <div class="flex items-center gap-2 mb-2">
-                                <span class="bg-blue-600 text-white text-[10px] px-2 py-1 rounded font-bold">طلب جديد</span>
-                                <h4 class="font-black text-lg">${data.userName}</h4>
+                                <span class="bg-blue-600/20 text-blue-400 text-[10px] px-2 py-1 rounded font-bold">طلب شحن</span>
+                                <h4 class="font-black text-lg">${d.userName}</h4>
                             </div>
-                            <div class="flex items-center gap-2 text-xs text-gray-400 font-mono mb-3">
-                                <i class="fas fa-id-badge"></i> ${data.userId}
-                                ${data.userDisplayId ? `<span class="bg-slate-700 px-2 rounded text-white font-bold">ID: ${data.userDisplayId}</span>` : ''}
-                            </div>
-                            <div class="bg-black/30 p-3 rounded-lg border border-dashed border-gray-600 inline-block w-full md:w-auto">
+                            <p class="text-xs text-gray-400 font-mono mb-2">ID: ${d.userId}</p>
+                            <div class="bg-black/40 p-3 rounded-lg border border-white/10 inline-block w-full md:w-auto text-center md:text-right">
                                 <p class="text-[10px] text-gray-500 font-bold mb-1">رمز الكارت</p>
-                                <p class="text-xl font-mono text-yellow-500 font-bold tracking-widest select-all">${data.cardCode}</p>
+                                <p class="text-xl font-mono text-yellow-500 font-bold tracking-widest select-all cursor-pointer">${d.cardCode}</p>
                             </div>
                         </div>
 
                         <div class="text-center px-6">
-                            <p class="text-xs text-gray-500 font-bold mb-1">المبلغ المطلوب</p>
-                            <p class="text-3xl font-black text-blue-400">${data.gems.toLocaleString()} 💎</p>
-                            <p class="text-[10px] text-gray-600 mt-1">${time}</p>
+                            <p class="text-xs text-gray-500 font-bold mb-1">القيمة</p>
+                            <p class="text-3xl font-black text-blue-400">${d.gems} 💎</p>
+                            <p class="text-[10px] text-gray-600 mt-2">${date}</p>
                         </div>
 
                         <div class="flex gap-3 w-full md:w-auto">
-                            <button onclick="approve('${id}', '${data.userId}', ${data.gems})" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-xl font-bold shadow-lg shadow-green-600/20 transition transform hover:scale-105">
-                                <i class="fas fa-check ml-2"></i> موافقة
+                            <button onclick="approveRequest('${id}', '${d.userId}', ${d.gems})" class="btn-action flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-xl font-bold shadow-lg">
+                                موافقة
                             </button>
-                            <button onclick="reject('${id}')" class="bg-slate-700 hover:bg-red-600 text-white py-3 px-4 rounded-xl transition hover:shadow-lg hover:shadow-red-600/20">
-                                <i class="fas fa-trash-alt"></i>
+                            <button onclick="rejectRequest('${id}')" class="btn-action bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white py-3 px-4 rounded-xl font-bold transition">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     `;
-                    container.appendChild(card);
+                    list.appendChild(item);
                 });
             });
         }
 
-        // --- Actions ---
-
-        window.approve = async (docId, userId, amount) => {
-            if (!confirm("هل الكارت صحيح؟ سيتم تحويل الجواهر فوراً.")) return;
-
+        // Actions
+        window.approveRequest = async (reqId, userId, gems) => {
+            if(!confirm(`تأكيد شحن ${gems} جوهرة لهذا المستخدم؟`)) return;
+            
             const userRef = doc(db, 'artifacts', appId, 'users', userId, 'profile', 'data');
-            const reqRef = doc(db, 'artifacts', appId, 'public', 'data', 'deposit_requests', docId);
-
+            const reqRef = doc(db, 'artifacts', appId, 'public', 'data', 'deposit_requests', reqId);
+            
             try {
-                await runTransaction(db, async (transaction) => {
-                    // Check if request still exists
-                    const reqDoc = await transaction.get(reqRef);
-                    if (!reqDoc.exists()) throw "الطلب غير موجود!";
-
-                    // Add gems to user
-                    transaction.update(userRef, { balance: increment(amount) });
+                await runTransaction(db, async (t) => {
+                    const rDoc = await t.get(reqRef);
+                    if(!rDoc.exists()) throw "الطلب محذوف مسبقاً";
                     
-                    // Delete request
-                    transaction.delete(reqRef);
+                    t.update(userRef, { balance: increment(gems) });
+                    t.delete(reqRef);
                 });
-                // alert("تم التحويل بنجاح ✅");
-            } catch (e) {
-                alert("خطأ: " + e.message);
-            }
+                alert("تم التفعيل والتحويل بنجاح ✅");
+            } catch(e) { alert("خطأ: " + e.message); }
         };
 
-        window.reject = async (docId) => {
-            if (!confirm("هل أنت متأكد من حذف هذا الطلب؟")) return;
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'deposit_requests', docId));
+        window.rejectRequest = async (reqId) => {
+            if(!confirm("حذف الطلب نهائياً؟")) return;
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'deposit_requests', reqId));
         };
 
     </script>
